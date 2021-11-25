@@ -1,6 +1,12 @@
+# 🍴 Fork Info 🍴
+
+This fork supports Webpack v5 and HtmlWebpackPlugin v5.
+
+Code from: https://www.npmjs.com/package/@wpe-tkpd/html-webpack-exclude-assets-plugin
+
 Exclude Assets extension for the HTML Webpack Plugin
 ========================================
-[![npm version](https://badge.fury.io/js/html-webpack-exclude-assets-plugin.svg)](https://badge.fury.io/js/html-webpack-exclude-assets-plugin) [![Build Status](https://travis-ci.org/jamesjieye/html-webpack-exclude-assets-plugin.svg?branch=master)](https://travis-ci.org/jamesjieye/html-webpack-exclude-assets-plugin) [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
+[![npm version](https://badge.fury.io/js/html-webpack-exclude-assets-plugin-webpack5.svg)](https://badge.fury.io/js/html-webpack-exclude-assets-plugin-webpack5) [![js-semistandard-style](https://img.shields.io/badge/code%20style-semistandard-brightgreen.svg?style=flat-square)](https://github.com/Flet/semistandard)
 
 Enhances [html-webpack-plugin](https://github.com/ampedandwired/html-webpack-plugin)
 functionality by adding the `{excludeAssets: RegExp | [RegExp]}` option to allow you to exclude assets.
@@ -26,7 +32,7 @@ Basic Usage
 Require the plugin in your webpack config:
 
 ```javascript
-var HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin');
+var HtmlWebpackExcludeAssetsPlugin = require('html-webpack-exclude-assets-plugin-webpack5');
 ```
 
 Add the plugin to your webpack config as follows:

@@ -1,4 +1,5 @@
 'use strict';
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 var assert = require('assert');
 
 function HtmlWebpackExcludeAssetsPlugin (options) {
@@ -20,15 +21,11 @@ HtmlWebpackExcludeAssetsPlugin.prototype.apply = function (compiler) {
 HtmlWebpackExcludeAssetsPlugin.prototype.applyCompilation = function applyCompilation (compilation) {
   var self = this;
   if ('hooks' in compilation) {
-    // If our target hook is not present, throw a descriptive error
-    if (!compilation.hooks.htmlWebpackPluginAlterAssetTags) {
-      throw new Error('The expected HtmlWebpackPlugin hook was not found! Ensure HtmlWebpackPlugin is installed and' +
-        ' was initialized before this plugin.');
-    }
-    compilation.hooks.htmlWebpackPluginAlterAssetTags.tapAsync(this.PluginName, registerCb);
+    HtmlWebpackPlugin.getHooks(compilation).alterAssetTags.tapAsync(this.PluginName, registerCb);
   } else {
     compilation.plugin('html-webpack-plugin-alter-asset-tags', registerCb);
   }
+
   function registerCb (htmlPluginData, callback) {
     var excludeAssets = htmlPluginData.plugin.options.excludeAssets;
     // Skip if the plugin configuration didn't set `excludeAssets`
@@ -66,22 +63,29 @@ HtmlWebpackExcludeAssetsPlugin.prototype.isExcluded = function (excludePatterns,
 
 HtmlWebpackExcludeAssetsPlugin.prototype.processAssets = function (excludePatterns, pluginData) {
   var self = this;
-  var body = [];
-  var head = [];
+  let pluginScriptTagsModified = [];
+  let pluginStyleTagsModified = [];
 
-  pluginData.head.forEach(function (tag) {
+  const pluginScriptTags = pluginData.assetTags.scripts;
+  const pluginStyleTags = pluginData.assetTags.styles;
+
+  pluginScriptTags.forEach(function (tag) {
     if (!tag.attributes || !self.isExcluded(excludePatterns, tag.attributes.src || tag.attributes.href)) {
-      head.push(tag);
+      pluginScriptTagsModified.push(tag);
     }
   });
 
-  pluginData.body.forEach(function (tag) {
+  pluginStyleTags.forEach(function (tag) {
     if (!tag.attributes || !self.isExcluded(excludePatterns, tag.attributes.src || tag.attributes.href)) {
-      body.push(tag);
+      pluginStyleTagsModified.push(tag);
     }
   });
 
-  return { head: head, body: body, plugin: pluginData.plugin, chunks: pluginData.chunks, outputName: pluginData.outputName };
+  return { assetTags: {
+    scripts: pluginScriptTagsModified,
+    styles: pluginStyleTagsModified,
+    meta: pluginData.assetTags.meta
+  }, plugin: pluginData.plugin, chunks: pluginData.chunks, outputName: pluginData.outputName };
 };
 
 module.exports = HtmlWebpackExcludeAssetsPlugin;
